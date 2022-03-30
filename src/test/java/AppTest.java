@@ -1,5 +1,3 @@
-package org.example;
-
 import static org.junit.Assert.assertTrue;
 
 import org.example.domain.Student;
