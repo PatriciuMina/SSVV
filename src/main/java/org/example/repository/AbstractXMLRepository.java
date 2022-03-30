@@ -88,8 +88,7 @@ public abstract class AbstractXMLRepository<ID, E extends HasID<ID>> extends Abs
     public E save(E entity) {
        E entity1 = super.save(entity);
        if (entity1 == null) {
-            //saveToFile(entity);
-       writeToFile();
+           writeToFile();
        }
 
         return entity1;
