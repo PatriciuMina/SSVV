@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AssignmentTest {
 
@@ -27,7 +27,7 @@ public class AssignmentTest {
     public void setup()
     {
         try {
-            File myObj = new File(filenameStudent);
+            File myObj = new File(filenameTema);
 
             if (!myObj.createNewFile()) {
                 FileWriter myWriter = new FileWriter(filenameTema);
@@ -49,20 +49,67 @@ public class AssignmentTest {
 
         service = new Service(studentXMLRepository, studentValidator, temaXMLRepository, temaValidator, notaXMLRepository, notaValidator);
     }
+
+    // invalid deadline
     @Test
     public void tc_1()
     {
+        assertThrowsExactly(ValidationException.class, () -> {
+            service.addTema(new Tema("1", "1", -15, 1));
+        });
         assertThrowsExactly(ValidationException.class, () -> {
             service.addTema(new Tema("1", "1", 15, 1));
         });
     }
 
+    // invalid primire
     @Test
     public void tc_2()
     {
         assertThrowsExactly(ValidationException.class, () -> {
             service.addTema(new Tema("1", "1", 1, 15));
         });
+        assertThrowsExactly(ValidationException.class, () -> {
+            service.addTema(new Tema("1", "1", 1, -15));
+        });
     }
 
+    // invalid description
+    @Test
+    public void tc_3()
+    {
+        assertThrowsExactly(ValidationException.class, () -> {
+            service.addTema(new Tema("1", "", 2, 3));
+        });
+        assertThrowsExactly(ValidationException.class, () -> {
+            service.addTema(new Tema("1", null, 2, 3));
+        });
+    }
+
+    // invalid id
+    @Test
+    public void tc_4()
+    {
+        assertThrowsExactly(ValidationException.class, () -> {
+            service.addTema(new Tema("", "abcd", 2, 3));
+        });
+        assertThrowsExactly(ValidationException.class, () -> {
+            service.addTema(new Tema(null, "abcd", 2, 3));
+        });
+    }
+
+    // valid assignment
+    @Test
+    public void tc_5()
+    {
+        assertNotNull(service.addTema(new Tema("1", "abcd", 2, 3)));
+    }
+
+    // valid assignment, already existing
+    @Test
+    public void tc_6()
+    {
+        service.addTema(new Tema("1", "abcd", 2, 3));
+        assertNotNull(service.addTema(new Tema("1", "abcd", 2, 3)));
+    }
 }
